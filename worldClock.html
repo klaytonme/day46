@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+
+  <meta charset="UTF-8">
+  <link rel="shortcut icon" type="image/x-icon" href="https://static.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico" />
+  <link rel="mask-icon" type="" href="https://static.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg" color="#111" />
+  <title>CodePen - clockApp</title>
+  
+  
+  
+  
+      <style>
+      #pointOfReference {
+  display:inline-block;
+  display:none;
+  background-color:red;
+  position:absolute;
+  height:5px;
+  width:5px;
+  top:400px;
+  left:400px;
+}
+
+#ourTimeClockDisplay{
+  position:relative;
+  text-align:center;
+  top:250px;
+  font-size:30px;
+  font-family:"Courier New", Courier, monospace;
+}
+
+#newYorkClockDisplay{
+  position:relative;
+  text-align:center;
+  top:250px;
+  font-size:30px;
+  font-family:"Courier New", Courier, monospace;
+}
+
+.clockFace {
+  display:inline-block;
+  position:absolute;
+}
+
+.clockDiv {
+  height:420px;
+  width:400px;
+  display:inline-block;
+}
+
+#timeZoneSeattle {
+  position:relative;
+  text-align:center;
+  top:380px;
+  font-size:30px;
+  font-family:"Courier New", Courier, monospace;
+}
+    </style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+  <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+
+
+</head>
+
+<body translate="no" >
+
+  <div id="worldClock">
+  <div class="clockDiv" id="ourTime">    
+    <svg class="clockFace" height="400" width="400" id="ourTimeClockSvg">
+
+      <circle cx="200" cy="200" r="185" stroke="black" stroke-width="15" fill="#555555" />
+
+      <line id="ourTime12oclock" x1 = "200" y1="15" x2="200" y2="40" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+      <line id="ourTime3oclock" x1 = "385" y1="200" x2="360" y2="200" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+      <line id="ourTime6oclock" x1 = "200" y1="385" x2="200" y2="360" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+      <line id="ourTime9oclock" x1 = "15" y1="200" x2="40" y2="200" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+
+      <line id="ourTimeHourHand" x1="100" y1="0" x2="200" y2="200" style="stroke:rgb(100,100,100);stroke-width:8;stroke-linecap:round" />
+      <line id="ourTimeMinuteHand" x1="100" y1="0" x2="200" y2="200" style="stroke:rgb(120,120,120);stroke-width:5;stroke-linecap:round" />
+      <line id="ourTimeSecondHand" x1="100" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2;stroke-linecap:round" />
+
+      <div id="ourTimeClockDisplay">hello</div>
+    </svg>
+  </div>
+
+  <div class="clockDiv" id="newYork">
+    <svg class="clockFace" height="400" width="400" id="clockSvg">
+
+      <circle cx="200" cy="200" r="185" stroke="black" stroke-width="15" fill="#555555" />
+
+      <line id="newYork12oclock" x1 = "200" y1="15" x2="200" y2="40" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+      <line id="newYork3oclock" x1 = "385" y1="200" x2="360" y2="200" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+      <line id="newYork6oclock" x1 = "200" y1="385" x2="200" y2="360" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+      <line id="newYork9oclock" x1 = "15" y1="200" x2="40" y2="200" style="stroke:rgb(0,0,0);stroke-width:15;stroke-linecap:round" />
+
+      <line id="newYorkHourHand" x1="100" y1="0" x2="200" y2="200" style="stroke:rgb(100,100,100);stroke-width:8;stroke-linecap:round" />
+      <line id="newYorkMinuteHand" x1="100" y1="0" x2="200" y2="200" style="stroke:rgb(120,120,120);stroke-width:5;stroke-linecap:round" />
+      <line id="newYorkSecondHand" x1="100" y1="0" x2="200" y2="200" style="stroke:rgb(255,0,0);stroke-width:2;stroke-linecap:round" />
+
+      <div id="newYorkClockDisplay">hello</div>
+    </svg>
+  </div>
+</div>
+
+<div id="pointOfReference"></div>
+    <script src="https://static.codepen.io/assets/common/stopExecutionOnTimeout-de7e2ef6bfefd24b79a3f68b414b87b8db5b08439cac3f1012092b2290c719cd.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+
+  
+
+    <script >
+      console.clear();
+var x = 0;
+var y = -100;
+var secondInterval = 0;
+var minuteInterval = 0;
+var ourTimeHourInterval = 0;
+var newYorkHourInterval = 0;
+
+function moveSecondHand() {
+  seconds = new Date().getSeconds();
+  milliseconds = new Date().getMilliseconds();
+  
+  secondInterval = eval(((seconds*1000)+milliseconds)/60000);
+  
+  x = eval(180*Math.sin(2*Math.PI*secondInterval));
+  y = eval(180*Math.cos(2*Math.PI*secondInterval));
+  
+  document.getElementById("ourTimeSecondHand").setAttribute("x1", eval(x+200).toString())
+  
+  document.getElementById("newYorkSecondHand").setAttribute("x1", eval(x+200).toString())
+  
+  document.getElementById("ourTimeSecondHand").setAttribute("y1", eval(-y+200).toString())
+  
+  document.getElementById("newYorkSecondHand").setAttribute("y1", eval(-y+200).toString())
+}
+
+function moveMinuteHand() {
+  minutes = new Date().getMinutes();
+  seconds = new Date().getSeconds();
+  
+  minuteInterval = eval(((minutes*100)+(seconds*1.667))/6000);
+  
+  x = eval(160*Math.sin(2*Math.PI*minuteInterval));
+  y = eval(160*Math.cos(2*Math.PI*minuteInterval));
+  
+  document.getElementById("ourTimeMinuteHand").setAttribute("x1", eval(x+200).toString())
+  
+  document.getElementById("newYorkMinuteHand").setAttribute("x1", eval(x+200).toString())
+  
+  document.getElementById("ourTimeMinuteHand").setAttribute("y1", eval(-y+200).toString())
+  
+  document.getElementById("newYorkMinuteHand").setAttribute("y1", eval(-y+200).toString())
+}
+
+function moveOurTimeHourHand() {
+  ourTimeHours = new Date().getHours();
+  
+  if (ourTimeHours > 12) {
+    ourTimeHours -= 12;
+  }
+  
+  ourTimeHourInterval = Math.round(ourTimeHourInterval*1000)/1000;
+  
+  if (ourTimeHourInterval != Math.round((ourTimeHours/12)*100)/100) {
+    ourTimeHourInterval += 0.001;
+  }
+
+  //hourInterval = 0/12;
+  
+  x = eval(100*Math.sin(2*Math.PI*ourTimeHourInterval));
+  y = eval(100*Math.cos(2*Math.PI*ourTimeHourInterval));
+  
+  document.getElementById("ourTimeHourHand").setAttribute("x1", eval(x+200).toString())
+  
+  document.getElementById("ourTimeHourHand").setAttribute("y1", eval(-y+200).toString())
+}
+
+function moveNewYorkHourHand() {
+  newYorkHours = new Date().getHours();
+  
+  newYorkHours += 3
+  
+  if (newYorkHours > 23) {
+    newYorkHours -= 24;
+  }
+  
+  if (newYorkHours > 12) {
+    newYorkHours -= 12;
+  }
+  
+  newYorkHourInterval = Math.round(newYorkHourInterval*1000)/1000;
+  
+  if (newYorkHourInterval != Math.round((newYorkHours/12)*100)/100) {
+    newYorkHourInterval += 0.001;
+  }
+
+  //hourInterval = 0/12;
+  
+  x = eval(100*Math.sin(2*Math.PI*newYorkHourInterval));
+  y = eval(100*Math.cos(2*Math.PI*newYorkHourInterval));
+  
+  document.getElementById("newYorkHourHand").setAttribute("x1", eval(x+200).toString())
+  
+  document.getElementById("newYorkHourHand").setAttribute("y1", eval(-y+200).toString())
+}
+
+function updateOurTimeClock() {
+  hours = new Date().getHours();
+  minutes = new Date().getMinutes();
+  seconds = new Date().getSeconds();
+  
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+  
+  if (minutes < 10) {
+    minutes = "0" + seconds;
+  }
+  
+  $("#ourTimeClockDisplay").text(hours + ":" + minutes + ":" + seconds);
+}
+
+function updateNewYorkClock() {
+  hours = new Date().getHours();
+  minutes = new Date().getMinutes();
+  seconds = new Date().getSeconds();
+  
+  hours += 3;
+  
+  if (hours > 23) {
+    hours -= 24;
+  } else if (hours > 12) {
+    hours -= 12;
+  }
+  
+  if (seconds < 10) {
+    seconds = "0" + seconds;
+  }
+  
+  if (minutes < 10) {
+    minutes = "0" + seconds;
+  }
+  
+  $("#newYorkClockDisplay").text(hours + ":" + minutes + ":" + seconds);
+}
+
+
+setInterval(moveSecondHand, 10);
+setInterval(moveMinuteHand, 10);
+setInterval(moveOurTimeHourHand, 10);
+setInterval(moveNewYorkHourHand, 10);
+setInterval(updateOurTimeClock, 10);
+setInterval(updateNewYorkClock, 10);
+      //# sourceURL=pen.js
+    </script>
+
+
+
+  
+  
+
+  <script src="https://static.codepen.io/assets/editor/live/css_reload-5619dc0905a68b2e6298901de54f73cefe4e079f65a75406858d92924b4938bf.js"></script>
+</body>
+
+</html>
+ 
